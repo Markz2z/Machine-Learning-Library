@@ -1,1 +1,1 @@
-A basic linear regression algorithm implemented in C++.
+A basic linear regression algorithm implemented in C.
