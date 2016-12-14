@@ -19,7 +19,7 @@ typedef struct TrainNode {
 } TrainNode;
 
 typedef struct OutputNode {
-    double out_val, real_val, bias_derivative;
+    double out_val, real_val, bias_derivative, bias;
     vector<double> derivative_sum;
 } OutputNode;
 
@@ -45,5 +45,5 @@ public:
     void setInputOutput(DataGroup output);
     TrainNode* input_node[INPUT_FEATURES];
     OutputNode* output_node[OUTPUT_NUM];
-    double error, bias;
+    double error;
 };

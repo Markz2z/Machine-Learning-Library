@@ -6,7 +6,6 @@
 LogisticRegression::LogisticRegression() {
     srand((unsigned)time(NULL));
     error = 100.f;
-    bias = genRandom();
     for (int i = 0; i < INPUT_FEATURES; ++i) {
         input_node[i] = new TrainNode();
         for (int j = 0; j < OUTPUT_NUM; ++j) {
@@ -15,6 +14,7 @@ LogisticRegression::LogisticRegression() {
     }
     for (int i = 0; i < OUTPUT_NUM; ++i) {
         output_node[i] = new OutputNode();
+        output_node[i]->bias = genRandom();
         for (int j = 0; j < INPUT_FEATURES; ++j) {
             output_node[i]->derivative_sum.push_back(0.f);
         }
@@ -23,7 +23,7 @@ LogisticRegression::LogisticRegression() {
 
 void LogisticRegression::forwardPropagation() {
     for (int i = 0; i < OUTPUT_NUM; ++i) {
-        double sum = bias;
+        double sum = output_node[i]->bias;
         for (int j = 0; j < INPUT_FEATURES; ++j) {
             sum += input_node[j]->weight[i] * input_node[j]->value;
         }
@@ -41,7 +41,7 @@ void LogisticRegression::forwardPropagation() {
 void LogisticRegression::predict(DataGroup &test_input) {
     setInputOutput(test_input);
     for (int i = 0; i < OUTPUT_NUM; ++i) {
-        double sum = bias;
+        double sum = output_node[i]->bias;
         for (int j = 0; j < INPUT_FEATURES; ++j) {
             sum += input_node[j]->weight[i] * input_node[j]->value;
         }
@@ -74,10 +74,11 @@ void LogisticRegression::train(vector<DataGroup> train_set, double threshold) {
             for (int j = 0; j < OUTPUT_NUM; ++j) {
                 double derivative = output_node[j]->derivative_sum[i] / train_set.size();
                 input_node[i]->weight[j] -= LEARNING_RATE * derivative;
-                bias -= LEARNING_RATE * output_node[j]->bias_derivative;
+                output_node[j]->bias -= LEARNING_RATE * output_node[j]->bias_derivative / train_set.size();
             }
         }
+        error /= train_set.size();
         cout << "error:" << error << endl;
-        cout << input_node[0]->weight[0] << " " << input_node[1]->weight[0] << " " << bias << endl;
+        cout << input_node[0]->weight[0] << " " << input_node[1]->weight[0] << endl;
     }
 }
