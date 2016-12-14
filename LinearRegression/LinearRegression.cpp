@@ -30,11 +30,15 @@ void LinearRegression::forwardPropagation() {
         }
         output_node[i]->out_val = sum;
         double delta = output_node[i]->out_val - output_node[i]->real_val;
+		for (int j = 0; j < INPUT_FEATURES; ++j) {
+			delta += LAMBDA * input_node[j]->weight[i];
+		}
         output_node[i]->bias_derivative += delta;
         error += 0.5 * delta * delta;
         for (int j = 0; j < INPUT_FEATURES; ++j) {
             output_node[i]->derivative_sum[j] += input_node[j]->value * delta;
-        }
+			error += input_node[j]->weight[i] * input_node[j]->weight[i] * 0.5 * LAMBDA;
+		}
     }
 }
 
@@ -90,5 +94,5 @@ void LinearRegression::train(vector<DataGroup> train_set, double threshold) {
 		}
 #endif
     }
-    cout << "iteration count" << iter << endl;
+    cout << "iteration:" << iter << endl;
 }
