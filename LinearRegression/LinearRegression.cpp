@@ -59,8 +59,10 @@ void LinearRegression::setInputOutput(DataGroup train_set) {
 }
 
 void LinearRegression::train(vector<DataGroup> train_set, double threshold) {
-    while(error > threshold) {
-        error = 0.f;
+    int iter = 0;
+	while(error > threshold) {
+        ++iter;
+		error = 0.f;
         for (int i = 0; i < OUTPUT_NUM; ++i) {
             output_node[i]->derivative_sum.assign(INPUT_FEATURES, 0.f);
             output_node[i]->bias_derivative = 0.f;
@@ -85,7 +87,8 @@ void LinearRegression::train(vector<DataGroup> train_set, double threshold) {
                 cout << "weight: " <<  input_node[i]->weight[j] << " bias:" << output_node[j]->bias << " ";
             }
             cout << endl;
-        }
+		}
 #endif
     }
+    cout << "iteration count" << iter << endl;
 }

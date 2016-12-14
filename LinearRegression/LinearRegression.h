@@ -14,6 +14,7 @@ using namespace std;
 #define INPUT_FEATURES 2
 #define OUTPUT_NUM 1
 #define LEARNING_RATE 0.005
+#define LAMBDA 0.5
 //#define DEBUG 1
 
 typedef struct InputNode {
