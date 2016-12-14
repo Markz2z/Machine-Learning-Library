@@ -1,1 +1,1 @@
-A basic linear regression algorithm implemented in C.
+Basic machine learning algorithm implemented by Python and C++.
