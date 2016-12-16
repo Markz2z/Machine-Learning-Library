@@ -23,7 +23,7 @@ int main() {
     train_set.push_back(train3);
     train_set.push_back(train4);
     train_set.push_back(train5);
-    lr.train(train_set, 1e-6);
+    lr.train(train_set, 1e-5);
 
     test1.in.push_back(1); test1.in.push_back(1); test1.out.push_back(0);
     lr.predict(test1);

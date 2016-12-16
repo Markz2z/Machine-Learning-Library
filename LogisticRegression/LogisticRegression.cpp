@@ -28,13 +28,15 @@ void LogisticRegression::forwardPropagation() {
             sum += input_node[j]->weight[i] * input_node[j]->value;
         }
         output_node[i]->out_val = sigmoid(sum);
-        double derivative_JTheta = (1 - output_node[i]->real_val) / (1 - output_node[i]->out_val) - (output_node[i]->real_val / output_node[i]->out_val);
-        derivative_JTheta *= (1 - output_node[i]->out_val) * output_node[i]->out_val;
-        output_node[i]->bias_derivative += derivative_JTheta;
+        double derivative_JTheta_without_regular = (1 - output_node[i]->real_val) / (1 - output_node[i]->out_val) - (output_node[i]->real_val / output_node[i]->out_val);
+		derivative_JTheta_without_regular *= (1 - output_node[i]->out_val) * output_node[i]->out_val;
+        output_node[i]->bias_derivative += derivative_JTheta_without_regular;
         error +=  (output_node[i]->real_val * log(output_node[i]->out_val) + (1 - output_node[i]->real_val) * log(1 - output_node[i]->out_val)) * -1;
         for (int j = 0; j < INPUT_FEATURES; ++j) {
+			double derivative_JTheta = derivative_JTheta_without_regular + REGULAR_LAMBDA * input_node[j]->weight[i];
             output_node[i]->derivative_sum[j] += input_node[j]->value * derivative_JTheta;
-        }
+        	error += REGULAR_LAMBDA * 0.5 * input_node[j]->weight[i] * input_node[j]->weight[i];
+		}
     }
 }
 

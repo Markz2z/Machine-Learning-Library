@@ -29,14 +29,12 @@ void LinearRegression::forwardPropagation() {
             sum += input_node[j]->weight[i] * input_node[j]->value;
         }
         output_node[i]->out_val = sum;
-        double delta = output_node[i]->out_val - output_node[i]->real_val;
-		for (int j = 0; j < INPUT_FEATURES; ++j) {
-			delta += LAMBDA * input_node[j]->weight[i];
-		}
-        output_node[i]->bias_derivative += delta;
-        error += 0.5 * delta * delta;
+        double J_derivative_without_reg = output_node[i]->out_val - output_node[i]->real_val;
+        output_node[i]->bias_derivative += J_derivative_without_reg;
+        error += 0.5 * J_derivative_without_reg * J_derivative_without_reg;
         for (int j = 0; j < INPUT_FEATURES; ++j) {
-            output_node[i]->derivative_sum[j] += input_node[j]->value * delta;
+			double J_derivative = J_derivative_without_reg + LAMBDA * input_node[j]->weight[i];
+			output_node[i]->derivative_sum[j] += input_node[j]->value * J_derivative;
 			error += input_node[j]->weight[i] * input_node[j]->weight[i] * 0.5 * LAMBDA;
 		}
     }

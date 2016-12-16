@@ -12,6 +12,7 @@ using namespace std;
 #define INPUT_FEATURES 2
 #define OUTPUT_NUM 1
 #define LEARNING_RATE 0.8
+#define REGULAR_LAMBDA 1e-7
 
 typedef struct TrainNode {
     vector<double> weight;
