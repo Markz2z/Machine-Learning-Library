@@ -49,3 +49,27 @@ def kMeans(dataSet, k, distMeans=disEclud, createCent=randCent):
 		ptsInClust = dataSet[nonzero(clusterAssment[:,0].A==cent)[0]]
         centroids[cent,:] = mean(ptsInClust, axis=0)
     return centroids, clusterAssment
+
+def bitKmeans(dataSet, k, distMeans = disEclud):
+    m = shape(dataSet)[0]
+    clusterAssment = mat(zeros((m,2)))
+    centroid0 = mean(dataSet, axis=0).tolist()[0]
+    centList = [centroid0]
+    for j in range(m):
+        clusterAssment[j, 1] = distMeans(mat(centroid0), dataSet[j,:] ** 2)
+    while (len(centList) < k):
+        lowerstSSE = inf
+        for i in range(len(centList)):
+            ptsInCurrentCluster = dataSet[nonzero(clusterAssment[:,0].A==i)[0], :]
+            centroidMat, splitClustAss = kMeans(ptsInCurrentCluster, 2, distMeans)
+            sseSplit = sum(splitClustAss[:, 1])
+            
+
+
+
+
+
+
+
+
+
