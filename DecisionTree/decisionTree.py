@@ -58,7 +58,8 @@ def majority(classList):
     return sortedClassCnt[0][0]
 
 
-def createTree(dataSet, labels):
+def createTree(dataSet, labels_):
+    labels = labels_[:]
     classList = [example[-1] for example in dataSet]
     if classList.count(classList[0]) == len(classList):
         return classList[0]
@@ -76,6 +77,21 @@ def createTree(dataSet, labels):
     return myTree
 
 
+def classify(inputTree, featLabels, testVec):
+    firstStr = inputTree.keys()[0]
+    secondDic = inputTree[firstStr]
+    featIdx = featLabels.index(firstStr)
+    for key in secondDic.keys():
+        if testVec[featIdx] == key:
+            if type(secondDic[key]).__name__ == 'dict':
+                classLabel = classify(secondDic[key], featLabels, testVec)
+            else:
+                classLabel = secondDic[key]
+    return classLabel
+
+
 dataSet = [[1, 1, 'yes'], [1, 1, 'yes'], [1, 0, 'no'], [0, 1, 'no'], [0, 1, 'no']]
-labels = ['no surfacing', 'flippers']
-print createTree(dataSet, labels)
+labelList = ['no surfacing', 'flippers']
+tree = createTree(dataSet, labelList)
+print classify(tree, labelList, [0, 1])
+
