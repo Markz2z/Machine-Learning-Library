@@ -6,7 +6,7 @@
 ## Supervised Learning
 * Linear Regression
 
-* Logistic Regression
+* Logistic Regression  <br />
 batch gradient descent
 
 * SVM
@@ -15,5 +15,5 @@ batch gradient descent
 
 * K-nearest Neighbors
 
-* Neural Network
+* Neural Network  <br />
 using backpropagation algorithm
