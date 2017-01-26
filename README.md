@@ -4,10 +4,12 @@
 * K-Means
 
 ## Supervised Learning
-* Linear Regression
+* Linear Regression <br />
+L2 Regularization
 
 * Logistic Regression  <br />
-batch gradient descent
+batch gradient descent  <br />
+L2 Regularization  <br />
 
 * SVM
 
