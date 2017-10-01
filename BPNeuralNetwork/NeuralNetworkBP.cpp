@@ -115,7 +115,7 @@ void NeuralNetwork::backPropagation() {
     }
 }
 
-void NeuralNetwork::predict(DataGroup &test_input) {
+void NeuralNetwork::predict(DataGroup& test_input) {
     for ( int i = 0; i < INPUT_LAYER_NODES; ++i) {
         cout << test_input.in[i] << " ";
     }
@@ -129,7 +129,7 @@ void NeuralNetwork::predict(DataGroup &test_input) {
     cout << endl;
 }
 
-void NeuralNetwork::setInputOutput(DataGroup data) {
+void NeuralNetwork::setInputOutput(DataGroup& data) {
     for (int i = 0; i < INPUT_LAYER_NODES; ++i) {
         input_node[i]->value = data.in[i];
     }
@@ -154,7 +154,7 @@ void NeuralNetwork::printAllNode() {
     for (int i = 0; i < OUTPUT_LAYER_NODES; ++i) cout << "outputNode[" << i << "]:" << output_node[i]->compute_val << endl;
 }
 
-void NeuralNetwork::train(vector<DataGroup> train_set, double threshold) {
+void NeuralNetwork::train(vector<DataGroup>& train_set, double threshold) {
     int layer, idx;
     unsigned long train_size = train_set.size();
     while(error > threshold) {
@@ -178,7 +178,7 @@ void NeuralNetwork::train(vector<DataGroup> train_set, double threshold) {
         }
 
         //2. train data
-        for (DataGroup data : train_set) {
+        for (DataGroup& data : train_set) {
             setInputOutput(data);
             forwardPropagation();
             backPropagation();

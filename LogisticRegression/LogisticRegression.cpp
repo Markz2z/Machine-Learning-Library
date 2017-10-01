@@ -40,7 +40,7 @@ void LogisticRegression::forwardPropagation() {
     }
 }
 
-void LogisticRegression::predict(DataGroup &test_input) {
+void LogisticRegression::predict(DataGroup& test_input) {
     setInputOutput(test_input);
     for (int i = 0; i < OUTPUT_NUM; ++i) {
         double sum = output_node[i]->bias;
@@ -51,7 +51,7 @@ void LogisticRegression::predict(DataGroup &test_input) {
     }
 }
 
-void LogisticRegression::setInputOutput(DataGroup train_set) {
+void LogisticRegression::setInputOutput(DataGroup& train_set) {
     for (int i = 0; i < INPUT_FEATURES; ++i) {
         input_node[i]->value = train_set.in[i];
     }
@@ -60,7 +60,7 @@ void LogisticRegression::setInputOutput(DataGroup train_set) {
     }
 }
 
-void LogisticRegression::train(vector<DataGroup> train_set, double threshold) {
+void LogisticRegression::train(vector<DataGroup>& train_set, double threshold) {
     while(error > threshold) {
         error = 0.f;
         for (int i = 0; i < OUTPUT_NUM; ++i) {

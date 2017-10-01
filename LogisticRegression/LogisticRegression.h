@@ -41,9 +41,9 @@ class LogisticRegression {
 public:
     LogisticRegression();
     void forwardPropagation();
-    void train(vector<DataGroup> train_set, double threshold);
+    void train(vector<DataGroup>& train_set, double threshold);
     void predict(DataGroup& test_input);
-    void setInputOutput(DataGroup output);
+    void setInputOutput(DataGroup& output);
     TrainNode* input_node[INPUT_FEATURES];
     OutputNode* output_node[OUTPUT_NUM];
     double error;

@@ -47,10 +47,10 @@ public:
     NeuralNetwork();
     void forwardPropagation();
     void backPropagation();
-    void train(vector<DataGroup> train_set, double threshold);
+    void train(vector<DataGroup>& train_set, double threshold);
     void predict(DataGroup& test_input);
     void printAllNode();
-    void setInputOutput(DataGroup output);
+    void setInputOutput(DataGroup& output);
     InputNode* input_node[INPUT_LAYER_NODES];
     vector<NeuronNode*> hide_node[HIDE_LAYERS];
     OutputNode* output_node[OUTPUT_LAYER_NODES];
