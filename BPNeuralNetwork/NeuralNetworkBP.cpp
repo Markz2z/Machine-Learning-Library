@@ -3,66 +3,79 @@
 //
 #include "NeuralNetworkBP.h"
 
-NeuralNetwork::NeuralNetwork() {
+NeuralNetwork::NeuralNetwork(int input_nodes, const std::vector<int>& hidden_layer_param,
+        int output_nodes) {
     srand((unsigned)time(NULL));
     error = 100.f;
 
+    int hidden_layers = hidden_layer_param.size();
+
+    _output_layer.resize(output_nodes);
+
     //init input layer
-    for (int i = 0; i < INPUT_LAYER_NODES; ++i) {
-        input_node[i] = new InputNode();
-        for (int j = 0; j < HIDE_LAYER_NODES; ++j) {
-            input_node[i]->weight.push_back(genRandom());
-            input_node[i]->weight_derivative_sum.push_back(0.f);
+    _input_layer.resize(input_nodes);
+    for (auto& node : _input_layer) {
+        int first_hidden_nodes = hidden_layer_param[0].size();
+        node->weight.resize(first_hidden_nodes);
+        for (int j = 0; j < node->weight.size(); ++j) {
+            node->weight[j] = genRandom();
         }
+        node->weight_derivative_sum.resize(first_hidden_nodes, 0.f);
     }
 
     //init hide layer
-    for (int i = 0; i < HIDE_LAYERS; ++i) {
-        for (int j = 0; j < HIDE_LAYER_NODES; ++j) {
-            NeuronNode *neuron_node = new NeuronNode();
-            int weight_cnt = i == HIDE_LAYERS - 1 ? OUTPUT_LAYER_NODES : HIDE_LAYER_NODES;
+    _hidden_layers.resize(hidden_layers);
+    int hidden_layer_idx = 0;
+    for (auto& hidden_layer : _hidden_layers) {
+        hidden_layer.resize(hidden_layer_param[hidden_layer_idx]);
+        for (auto& hidden_node : hidden_layer) {
+            int weight_cnt = hidden_layer_idx == hidden_layers - 1 ?
+                output_nodes : hidden_layer_param[hidden_layer_idx + 1].size();
+            hidden_node.weight.resize(weight_cnt);
             for (int k = 0; k < weight_cnt; ++k) {
-                neuron_node->weight.push_back(genRandom());
+                hidden_node.weight[k] = genRandom();
             }
-            int derivative_iter = i == 0 ? INPUT_LAYER_NODES : HIDE_LAYER_NODES;
-            for (int k = 0; k < derivative_iter; ++k) {
-                neuron_node->weight_derivative_sum.push_back(0.f);
-            }
-            neuron_node->bias = genRandom();
-            hide_node[i].push_back(neuron_node);
+            int derivatives = i == 0 ? input_nodes : hidden_layer_param[hidden_layer_idx - 1].size();
+            hidden_node.weight_derivative_sum.resize(derivatives, 0.f);
+            hidden_node.bias = genRandom();
         }
+        ++hidden_layer_idx;
     }
 
     //init output layer
-    for (int i = 0; i < OUTPUT_LAYER_NODES; ++i) {
-        output_node[i] = new OutputNode();
-        output_node[i]->bias = genRandom();
-    }
+    _output_layer.resize(output_nodes);
 }
 
 void NeuralNetwork::forwardPropagation() {
-    for (int i = 0; i < HIDE_LAYERS; ++i) {
-        for (int j = 0; j < HIDE_LAYER_NODES; ++j) {
-            double sum = hide_node[i][j]->bias;
-            if (i==0) {
-                for (int k = 0; k < INPUT_LAYER_NODES; ++k) {
-                    sum += input_node[k]->value * input_node[k]->weight[j];
+
+    // hidden layer
+    for (int layer_idx = 0: layer_idx < _hidden_layers.size(); ++layer_idx) {
+        auto& layer = _hidden_layers[layer_idx];
+        for (int node_idx = 0; node_idx < layer.size(); ++node_idx) {
+            auto& node = layer[node_idx];
+            double sum = node.bias;
+            if (layer_idx == 0) {
+                for (const auto& input_node : _input_layer) {
+                    sum += input_node.value * input_node.weight[node_idx];
                 }
             } else {
-                for (int k = 0; k < HIDE_LAYER_NODES; ++k) {
-                    sum += hide_node[i-1][k]->value * hide_node[i-1][k]->weight[j];
+                auto& prev_layer = _hidden_layers[layer_idx - 1];
+                for (const auto& prev_node : prev_layer) {
+                    sum += prev_node.value * prev_node.weight[node_idx];
                 }
             }
-            hide_node[i][j]->value = sigmoid(sum);
+            node.value = sum;
         }
     }
 
-    for (int i = 0; i < OUTPUT_LAYER_NODES; ++i) {
-        double sum = output_node[i]->bias;
-        for (int j = 0; j < HIDE_LAYER_NODES; ++j) {
-            sum += hide_node[HIDE_LAYERS-1][j]->value * hide_node[HIDE_LAYERS-1][j]->weight[i];
+    for (int node_idx = 0; node_idx < _output_layer.size(); ++node_idx) {
+        auto& output_node = _output_layer[node_idx];
+        double sum = output_node.bias;
+        auto& hide_layer = _hidden_layers.back();
+        for (const auto& hide_node : hide_layer) {
+            sum += hide_node.value * hide_node.weight[node_idx];
         }
-        output_node[i]->compute_val = sigmoid(sum);
+        output_node.compute_val = sigmoid(sum);
     }
 }
 
@@ -142,16 +155,29 @@ void NeuralNetwork::setInputOutput(DataGroup& data) {
  * using for debug to dump all of the parameters in neural network
  * */
 void NeuralNetwork::printAllNode() {
-    for (int i = 0; i < INPUT_LAYER_NODES; ++i) cout << "inputNode[" << i << "]:" << input_node[i]->value << " ";
-    cout << endl;
-    for (int i = 0; i < HIDE_LAYERS; ++i) {
-        cout << "hide layer " << i << " ";
-        for (int j = 0; j < HIDE_LAYER_NODES; ++j) {
-            cout << " node[" << j << "]:" << hide_node[i][j]->value << " ";
-        }
-        cout << endl;
+    std::stringstream ss;
+    int idx = 0;
+    for (const auto& node : _input_layer) {
+        ss << "inputNode[" << idx++ << "]:" << node.value << " ";
     }
-    for (int i = 0; i < OUTPUT_LAYER_NODES; ++i) cout << "outputNode[" << i << "]:" << output_node[i]->compute_val << endl;
+    ss << "\n";
+
+    int layer_idx = 0;
+    for (const auto& layer : _hidden_layers) {
+        int node_idx = 0;
+        for (const auto& node : layer) {
+            ss << "layer[" << layer_idx << "] node[" << node_idx++ << "] : " << node.value << " ";
+        }
+        ss << "\n";
+        ++layer_idx;
+    }
+
+    idx = 0;
+    for (const auto& node : _output_layer) {
+        ss << "outputNode[" << idx++ << "] : " << node.compute_val << " ";
+    }
+    ss << "\n";
+    std::cout << ss.str() << std::endl;
 }
 
 void NeuralNetwork::train(vector<DataGroup>& train_set, double threshold) {
