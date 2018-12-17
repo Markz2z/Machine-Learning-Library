@@ -10,11 +10,11 @@
 
 #define LEARNING_RATE 0.9
 
-double genRandom() {
+static double genRandom() {
     return ((2.0 * (double)rand() / RAND_MAX) - 1);
 }
 
-double sigmoid(double x) {
+static double sigmoid(double x) {
     return 1 / (1 + exp(-x));
 }
 
@@ -33,6 +33,7 @@ typedef struct DataGroup {
     std::vector<double> in, out;
 } DataGroup;
 
+
 class NeuralNetwork {
 public:
     NeuralNetwork(int input_nodes, const std::vector<int>& hidden_layer_param, int output_nodes);
@@ -42,7 +43,6 @@ public:
     void predict(DataGroup& test_input);
     void print_all_node();
     void initialize(const DataGroup& output);
-
 private:
     std::vector<InputNode> _input_layer;
     std::vector<std::vector<NeuronNode>> _hidden_layers;
